@@ -10,7 +10,7 @@ import kornell.server.content.ContentManagers
 import kornell.server.dev.util.{ContentsParser, WizardParser}
 import kornell.server.jdbc.repository.{CourseClassRepo, CourseClassesRepo, CourseRepo, CourseVersionRepo, CourseVersionsRepo, CoursesRepo, InstitutionRepo, PersonRepo}
 import kornell.server.scorm12.ManifestParser
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 
 import scala.collection.mutable.ListBuffer
 import scala.xml.XML
@@ -94,7 +94,7 @@ object ContentRepository {
         CourseClassesRepo(enrollment.getCourseClassUUID).version
     }.get
     val course = CourseRepo(version.getCourseUUID).get
-    val prefix = repo.url(S3Service.CLASSROOMS, course.getCode, version.getDistributionPrefix)
+    val prefix = repo.url(ContentService.CLASSROOMS, course.getCode, version.getDistributionPrefix)
     prefix
   }
 
@@ -111,7 +111,7 @@ object ContentRepository {
     val repositoryUUID = institution.getAssetsRepositoryUUID
     val repo = ContentManagers.forRepository(repositoryUUID)
     val url = mkurl(course.getCode, version.getDistributionPrefix, filename)
-    val structureIn = repo.inputStream(S3Service.CLASSROOMS, url).get
+    val structureIn = repo.inputStream(ContentService.CLASSROOMS, url).get
     structureIn
   }
 
@@ -123,7 +123,7 @@ object ContentRepository {
     val version = versionRepo.get
     val repo = ContentManagers.forRepository(repositoryUUID)
     val course = CourseRepo(version.getCourseUUID).get
-    val structureIn = repo.inputStream(S3Service.CLASSROOMS, mkurl(course.getCode, version.getDistributionPrefix, filename)).get
+    val structureIn = repo.inputStream(ContentService.CLASSROOMS, mkurl(course.getCode, version.getDistributionPrefix, filename)).get
     structureIn
   }
 }

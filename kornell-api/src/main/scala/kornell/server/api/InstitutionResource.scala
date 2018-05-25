@@ -5,7 +5,7 @@ import kornell.core.entity.{ChatThreadType, Institution}
 import kornell.core.entity.role.Roles
 import kornell.core.to.{InstitutionEmailWhitelistTO, InstitutionHostNamesTO, InstitutionRegistrationPrefixesTO, RolesTO}
 import kornell.server.jdbc.repository.{ChatThreadsRepo, InstitutionEmailWhitelistRepo, InstitutionHostNameRepo, InstitutionRepo, RolesRepo}
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 import kornell.server.util.AccessDeniedErr
 import kornell.server.util.Conditional.toConditional
 
@@ -120,7 +120,7 @@ class InstitutionResource(uuid: String) {
   @Path("uploadUrl")
   @Produces(Array("text/plain"))
   def getUploadUrl(@QueryParam("filename") filename: String): String = {
-    S3Service.getInstitutionUploadUrl(uuid, filename)
+    ContentService.getInstitutionUploadUrl(uuid, filename)
   }.requiring(isPlatformAdmin(uuid), AccessDeniedErr())
     .or(isInstitutionAdmin(uuid), AccessDeniedErr())
     .get

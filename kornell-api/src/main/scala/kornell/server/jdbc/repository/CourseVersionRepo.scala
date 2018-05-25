@@ -7,7 +7,7 @@ import kornell.core.error.exception.EntityConflictException
 import kornell.core.util.{StringUtils, UUID}
 import kornell.server.content.ContentManagers
 import kornell.server.jdbc.SQL._
-import kornell.server.service.{AssetService, S3Service}
+import kornell.server.service.{AssetService, ContentService}
 
 class CourseVersionRepo(uuid: String) {
 
@@ -77,7 +77,7 @@ class CourseVersionRepo(uuid: String) {
       val repo = ContentRepositoriesRepo.firstRepositoryByInstitution(course.getInstitutionUUID).get
       val cm = ContentManagers.forRepository(repo.getUUID)
 
-      cm.deleteFolder(S3Service.CLASSROOMS, course.getCode, courseVersion.getDistributionPrefix)
+      cm.deleteFolder(ContentService.CLASSROOMS, course.getCode, courseVersion.getDistributionPrefix)
       courseVersion
     } else {
       throw new EntityConflictException("versionHasClasses")

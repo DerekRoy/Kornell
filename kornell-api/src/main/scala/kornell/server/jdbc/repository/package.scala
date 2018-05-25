@@ -57,7 +57,11 @@ package object repository {
       rs.getString("prefix"),
       rs.getString("region"),
       rs.getString("institutionUUID"),
-      rs.getString("path"))
+      rs.getString("path"),
+      rs.getString("accountName"),
+      rs.getString("accountKey"),
+      rs.getString("container")
+    )
 
   implicit def toCourseClass(r: ResultSet): CourseClass =
     newCourseClass(r.getString("uuid"), r.getString("name"),

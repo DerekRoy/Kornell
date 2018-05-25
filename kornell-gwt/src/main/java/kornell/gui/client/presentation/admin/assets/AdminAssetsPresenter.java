@@ -237,8 +237,9 @@ public class AdminAssetsPresenter implements AdminAssetsView.Presenter {
                 var req = new XMLHttpRequest();
                 req.open('PUT', url);
                 req.setRequestHeader("Content-type", contentType);
+                req.setRequestHeader("x-ms-blob-type", "BlockBlob");
                 req.onreadystatechange = function() {
-                    if (req.readyState == 4 && req.status == 200) {
+                    if (req.readyState == 4 && (req.status == 200 || req.status == 201)) {
                         @kornell.gui.client.presentation.admin.assets.AdminAssetsPresenter::postProcessImageUpload(Ljava/lang/String;)(fileName);
                     } else if (req.readyState != 2){
                         @kornell.gui.client.presentation.admin.assets.AdminAssetsPresenter::hidePacifier()();

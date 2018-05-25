@@ -10,7 +10,7 @@ import kornell.core.entity._
 import kornell.core.util.StringUtils
 import kornell.core.util.StringUtils._
 import kornell.server.jdbc.repository.{CourseClassRepo, CourseRepo, CourseVersionRepo, EmailTemplatesRepo, InstitutionEmailWhitelistRepo, InstitutionsRepo, PersonRepo, RolesRepo}
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 import kornell.server.util.Settings._
 import org.apache.commons.io.FileUtils
 
@@ -210,7 +210,7 @@ object EmailService {
 
     if (!imgFile.exists) {
       //TODO: Use ContentStore API
-      val url = new URL(mkurl(institution.getBaseURL, "repository", institution.getAssetsRepositoryUUID, S3Service.PREFIX, S3Service.INSTITUTION, logoImageName))
+      val url = new URL(mkurl(institution.getBaseURL, "repository", institution.getAssetsRepositoryUUID, ContentService.PREFIX, ContentService.INSTITUTION, logoImageName))
       try {
         FileUtils.copyURLToFile(url, imgFile)
       } catch {

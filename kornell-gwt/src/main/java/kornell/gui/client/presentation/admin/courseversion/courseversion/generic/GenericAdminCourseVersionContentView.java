@@ -122,8 +122,9 @@ public class GenericAdminCourseVersionContentView extends Composite implements A
                 var req = new XMLHttpRequest();
                 req.open('PUT', url);
                 req.setRequestHeader("Content-type", "application/zip");
+                req.setRequestHeader("x-ms-blob-type", "BlockBlob");
                 req.onreadystatechange = function() {
-                    if (req.readyState == 4 && req.status == 200) {
+                    if (req.readyState == 4 && (req.status == 200 || req.status == 201)) {
                         @kornell.gui.client.presentation.admin.courseversion.courseversion.generic.GenericAdminCourseVersionContentView::hidePacifier()();
                         @kornell.gui.client.util.view.KornellNotification::show(Ljava/lang/String;)("Atualização de versão completa");
                     }
