@@ -87,7 +87,7 @@ public class RESTClient {
     public void locationAssign(String... path) {
         if (Cookies.isCookieEnabled()) {
             ClientProperties.setCookie(ClientProperties.X_KNL_TOKEN, ClientProperties.get(ClientProperties.X_KNL_TOKEN),
-                    new Date(new Date().getTime() + 2000));
+                    new Date(new Date().getTime() + 5000));
             String url = appendTimestampIfIE(mkurl(getApiUrl(), path));
             Window.open(url, "_blank", "");
         } else {

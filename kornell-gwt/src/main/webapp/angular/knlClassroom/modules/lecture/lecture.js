@@ -12,6 +12,7 @@ app.controller('LectureController', [
     function($scope, $rootScope, $timeout, $interval, $location, knlUtils) {
 
         var classroomInfo = JSON.parse(decodeURI(Base64.decode(window.isPreview ? localStorage.KNLwp : $location.$$search.classroomInfo)));
+        $rootScope.studentName = $location.$$search.studentName;
 
         classroomInfo.lectures = [];
         angular.forEach(classroomInfo.modules, function(module){
@@ -114,8 +115,6 @@ app.controller('LectureController', [
                     }
                 });
             });
-
-            $rootScope.studentName = knlUtils.doLMSGetValueSanitized("cmi.core.student_name")
         };
 
         $scope.toggleStructureDebug = function(){

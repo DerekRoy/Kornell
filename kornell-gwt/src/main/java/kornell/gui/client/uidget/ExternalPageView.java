@@ -40,6 +40,7 @@ public class ExternalPageView extends Uidget implements ShowChatDockEventHandler
                 ContentSpec.WIZARD.equals(session.getCurrentCourseClass().getCourseVersionTO().getCourseTO().getCourse().getContentSpec())){
             String classroomJson = new WizardTeacher(session.getCurrentCourseClass()).getClassroomJson();
             url += "&classroomInfo="+classroomJson;
+            url += "&studentName="+session.getCurrentUser().getPerson().getFullName();
         }
         iframe.setSrc(url);
         initWidget(panel);
