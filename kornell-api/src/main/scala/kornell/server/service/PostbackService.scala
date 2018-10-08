@@ -227,16 +227,7 @@ object PostbackService {
           // we need to send params exactly as we received them
           params += "&" + name + "=" + URLEncoder.encode(pagseguroRequest.getParameter(name), "windows-1252")
         }
-        val post_url = current_url + "&Token=" + postbackConfig.getContents + params
-        val request = new HttpPost(post_url)
-        val response = client.execute(request)
-        val response_contents = EntityUtils.toString(response.getEntity)
-        if (response_contents == "VERIFICADO") {
-          processPagseguroResponseWooCommerce(institutionUUID, pagseguroRequest)
-        } else {
-          logger.log(Level.SEVERE, "POSTBACKLOG: Cannot validate transaction [" + prettyParams(pagseguroRequest) + "] and " +
-            " institution: [" + institutionUUID + "] and env [" + env + "], could not process")
-        }
+        processPagseguroResponseWooCommerce(institutionUUID, pagseguroRequest)
       }
     }
   }
