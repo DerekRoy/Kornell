@@ -142,8 +142,9 @@ public class GenericInstitutionAssetsView extends Composite {
                 var req = new XMLHttpRequest();
                 req.open('PUT', url);
                 req.setRequestHeader("Content-type", contentType);
+                req.setRequestHeader("x-ms-blob-type", "BlockBlob");
                 req.onreadystatechange = function() {
-                    if (req.readyState == 4 && req.status == 200) {
+                    if (req.readyState == 4 && (req.status == 200 || req.status == 201)) {
                         @kornell.gui.client.presentation.admin.institution.generic.GenericInstitutionAssetsView::hidePacifier()();
                         @kornell.gui.client.util.view.KornellNotification::show(Ljava/lang/String;)("Atualização de imagem completa");
                     }

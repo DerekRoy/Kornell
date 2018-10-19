@@ -2,6 +2,7 @@ package kornell.server.service
 
 import kornell.core.entity.CourseDetailsEntityType
 import kornell.core.util.{StringUtils, UUID}
+import kornell.server.content.S3ContentManager
 import kornell.server.jdbc.repository.{CertificatesDetailsRepo, ContentRepositoriesRepo, CourseDetailsHintsRepo, CourseDetailsLibrariesRepo, CourseDetailsSectionsRepo, InstitutionRepo}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -11,14 +12,12 @@ object AssetService {
   def copyAssets(institutionUUID: String, entityType: CourseDetailsEntityType, sourceEntityUUID: String, targetEntityUUID: String, thumbUrl: String): Unit = {
     val institution = InstitutionRepo(institutionUUID).get
     val bucketName = ContentRepositoriesRepo.firstRepository(institution.getAssetsRepositoryUUID).get.getBucketName
-    val s3 = S3Service.getAmazonS3Client(institution.getUUID)
+    val s3 = S3ContentManager.getAmazonS3Client(institution.getUUID)
 
     //copy thumbnail
     if (StringUtils.isSome(thumbUrl)) {
-      val sourceThumbPath = S3Service.getCourseAssetUrl(institutionUUID, sourceEntityUUID, S3Service.THUMB_FILENAME, "")
-      val targetThumbPath = S3Service.getCourseAssetUrl(institutionUUID, targetEntityUUID, S3Service.THUMB_FILENAME, "")
-      println(sourceThumbPath)
-      println(targetThumbPath)
+      val sourceThumbPath = ContentService.getCourseAssetUrl(institutionUUID, sourceEntityUUID, ContentService.THUMB_FILENAME, "")
+      val targetThumbPath = ContentService.getCourseAssetUrl(institutionUUID, targetEntityUUID, ContentService.THUMB_FILENAME, "")
       try {
         s3.copyObject(bucketName, sourceThumbPath, bucketName, targetThumbPath)
       } catch { case _: Exception => }
@@ -33,10 +32,8 @@ object AssetService {
       certificateDetails.setEntityUUID(targetEntityUUID)
       CertificatesDetailsRepo.create(certificateDetails)
 
-      val sourceCertificateBgPath = S3Service.getCourseAssetUrl(institutionUUID, sourceEntityUUID, S3Service.CERTIFICATE_FILENAME, "")
-      val targetCertificateBgPath = S3Service.getCourseAssetUrl(institutionUUID, targetEntityUUID, S3Service.CERTIFICATE_FILENAME, "")
-      println(sourceCertificateBgPath)
-      println(targetCertificateBgPath)
+      val sourceCertificateBgPath = ContentService.getCourseAssetUrl(institutionUUID, sourceEntityUUID, ContentService.CERTIFICATE_FILENAME, "")
+      val targetCertificateBgPath = ContentService.getCourseAssetUrl(institutionUUID, targetEntityUUID, ContentService.CERTIFICATE_FILENAME, "")
       try {
         s3.copyObject(bucketName, sourceCertificateBgPath, bucketName, targetCertificateBgPath)
       } catch { case _: Exception => }
@@ -65,10 +62,8 @@ object AssetService {
       courseDetailsLibrary.setUUID(UUID.random)
       CourseDetailsLibrariesRepo.create(courseDetailsLibrary)
 
-      val sourceLibraryPath = S3Service.getCourseAssetUrl(institutionUUID, sourceEntityUUID, S3Service.THUMB_FILENAME, "library")
-      val targetLibraryPath = S3Service.getCourseAssetUrl(institutionUUID, targetEntityUUID, S3Service.THUMB_FILENAME, "library")
-      println(sourceLibraryPath)
-      println(targetLibraryPath)
+      val sourceLibraryPath = ContentService.getCourseAssetUrl(institutionUUID, sourceEntityUUID, ContentService.THUMB_FILENAME, "library")
+      val targetLibraryPath = ContentService.getCourseAssetUrl(institutionUUID, targetEntityUUID, ContentService.THUMB_FILENAME, "library")
       try {
         s3.copyObject(bucketName, sourceLibraryPath, bucketName, targetLibraryPath)
       } catch { case _: Exception => }

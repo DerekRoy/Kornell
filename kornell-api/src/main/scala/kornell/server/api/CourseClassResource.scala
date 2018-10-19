@@ -2,14 +2,14 @@ package kornell.server.api
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException
 import javax.ws.rs._
-import javax.ws.rs.core.{Context, Response, SecurityContext}
-import kornell.core.entity.{ChatThreadType, CourseClass}
+import javax.ws.rs.core.{Context, SecurityContext}
 import kornell.core.entity.role.{RoleCategory, RoleType, Roles}
+import kornell.core.entity.{ChatThreadType, CourseClass}
 import kornell.core.error.exception.{EntityConflictException, EntityNotFoundException, UnauthorizedAccessException}
 import kornell.core.to.{CourseClassTO, LibraryFilesTO, RolesTO}
 import kornell.server.jdbc.repository.{AuthRepo, ChatThreadsRepo, CourseClassRepo, CourseClassesRepo, RolesRepo}
 import kornell.server.repository.LibraryFilesRepository
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 import kornell.server.util.AccessDeniedErr
 import kornell.server.util.Conditional.toConditional
 
@@ -150,7 +150,7 @@ class CourseClassResource(uuid: String) {
   @Path("uploadUrl")
   @Produces(Array("text/plain"))
   def getUploadUrl(@QueryParam("filename") filename: String, @QueryParam("path") path: String): String = {
-    S3Service.getCourseClassUploadUrl(uuid, filename, path)
+    ContentService.getCourseClassUploadUrl(uuid, filename, path)
   }.requiring(isPlatformAdmin, AccessDeniedErr())
     .or(isInstitutionAdmin, AccessDeniedErr())
     .get

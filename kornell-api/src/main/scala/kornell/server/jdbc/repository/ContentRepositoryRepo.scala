@@ -16,7 +16,10 @@ class ContentRepositoryRepo(uuid: String) {
       | bucketName = ${repo.getBucketName},
       | region = ${repo.getRegion},
       | prefix = ${repo.getPrefix},
-      | path = ${repo.getPath}
+      | path = ${repo.getPath},
+      | accountName = ${repo.getAccountName},
+      | accountKey = ${repo.getAccountKey},
+      | container = ${repo.getContainer}
       | where uuid = ${repo.getUUID}
     """.executeUpdate
 

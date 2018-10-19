@@ -3,11 +3,14 @@ package kornell.server.content
 import java.io.InputStream
 import java.util.logging.Logger
 
+import com.amazonaws.HttpMethod
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3Client
-import com.amazonaws.services.s3.model.{DeleteObjectsRequest, ObjectMetadata}
+import com.amazonaws.services.s3.model.{DeleteObjectsRequest, GeneratePresignedUrlRequest, ObjectMetadata}
 import kornell.core.entity.ContentRepository
 import kornell.core.util.StringUtils._
+import kornell.server.jdbc.repository.{ContentRepositoriesRepo, InstitutionRepo}
+import org.joda.time.DateTime
 
 import scala.collection.JavaConverters._
 import scala.io.{BufferedSource, Source}
@@ -40,7 +43,7 @@ class S3ContentManager(repo: ContentRepository)
     }
   }
 
-  def put(value: InputStream, contentType: String, contentDisposition: String, metadataMap: Map[String, String], keys: String*): Unit = {
+  def put(value: InputStream, contentLength: Int, contentType: String, contentDisposition: String, metadataMap: Map[String, String], keys: String*): Unit = {
     val metadata = new ObjectMetadata()
     metadata.setUserMetadata(metadataMap asJava)
     Option(contentType).foreach { metadata.setContentType }
@@ -69,6 +72,28 @@ class S3ContentManager(repo: ContentRepository)
     }
   }
 
+  def getUploadUrl(path: String, contentType: String): String = {
+    println(path)
+    val presignedRequest = new GeneratePresignedUrlRequest(repo.getBucketName, path)
+    presignedRequest.setMethod(HttpMethod.PUT)
+    presignedRequest.setExpiration(new DateTime().plusMinutes(1).toDate)
+    presignedRequest.setContentType(contentType)
+    s3.generatePresignedUrl(presignedRequest).toString
+  }
+
   def getPrefix: String = repo.getPrefix
 
+}
+
+object S3ContentManager {
+  def getAmazonS3Client(institutionUUID: String): AmazonS3Client = {
+    val institution = InstitutionRepo(institutionUUID).get
+    val repo = ContentRepositoriesRepo.firstRepository(institution.getAssetsRepositoryUUID).get
+    val s3 = if (isSome(repo.getAccessKeyId))
+      new AmazonS3Client(new BasicAWSCredentials(repo.getAccessKeyId, repo.getSecretAccessKey))
+    else
+      new AmazonS3Client
+
+    s3
+  }
 }

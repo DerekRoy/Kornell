@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response
 import kornell.core.entity.CourseVersion
 import kornell.core.to.CourseVersionTO
 import kornell.server.jdbc.repository.{CourseVersionRepo, CourseVersionsRepo}
-import kornell.server.service.{S3Service, SandboxService}
+import kornell.server.service.{ContentService, SandboxService}
 import kornell.server.util.AccessDeniedErr
 import kornell.server.util.Conditional.toConditional
 
@@ -53,7 +53,7 @@ class CourseVersionResource(uuid: String) {
   @Path("uploadUrl")
   @Produces(Array("text/plain"))
   def getUploadUrl(@QueryParam("filename") filename: String, @QueryParam("path") path: String): String = {
-    S3Service.getCourseVersionUploadUrl(uuid, filename, path)
+    ContentService.getCourseVersionUploadUrl(uuid, filename, path)
   }.requiring(isPlatformAdmin, AccessDeniedErr())
     .or(isInstitutionAdmin, AccessDeniedErr())
     .or(isPublisher, AccessDeniedErr())
@@ -63,7 +63,7 @@ class CourseVersionResource(uuid: String) {
   @Path("contentUploadUrl")
   @Produces(Array("text/plain"))
   def getUploadUrl: String = {
-    S3Service.getCourseVersionContentUploadUrl(uuid)
+    ContentService.getCourseVersionContentUploadUrl(uuid)
   }.requiring(isPlatformAdmin, AccessDeniedErr())
     .or(isInstitutionAdmin, AccessDeniedErr())
     .or(isPublisher, AccessDeniedErr())

@@ -29,6 +29,16 @@ public interface ContentRepository {
     String getRegion();
     void setRegion(String region);
 
+    //Azure
+    String getAccountName();
+    void setAccountName(String accountName);
+
+    String getAccountKey();
+    void setAccountKey(String accountKey);
+
+    String getContainer();
+    void setContainer(String container);
+
     //FS
     String getPath();
     void setPath(String path);

@@ -18,7 +18,7 @@ import kornell.server.jdbc.PreparedStmt
 import kornell.server.jdbc.SQL.SQLHelper
 import kornell.server.jdbc.repository.{CertificatesDetailsRepo, ContentRepositoriesRepo, EnrollmentsRepo, InstitutionRepo, PersonRepo}
 import kornell.server.repository.Entities
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 import kornell.server.util.DateConverter
 
 object ReportCertificateGenerator {
@@ -129,7 +129,7 @@ object ReportCertificateGenerator {
     val parameters: util.HashMap[String, Object] = new util.HashMap()
     val baseURL = certificateData.head.getBaseURL.split("Kornell.nocache.html").head
     //TODO: both urls NEED the extra slash because the jasper files count on it
-    parameters.put("institutionURL", mkurl(baseURL, "repository", certificateData.head.getAssetsRepositoryUUID, S3Service.PREFIX, S3Service.INSTITUTION) + "/")
+    parameters.put("institutionURL", mkurl(baseURL, "repository", certificateData.head.getAssetsRepositoryUUID, ContentService.PREFIX, ContentService.INSTITUTION) + "/")
     parameters.put("assetsURL", mkurl(baseURL, certificateDetails.getBgImage) + "/")
 
     val cl = Thread.currentThread.getContextClassLoader
@@ -168,6 +168,7 @@ object ReportCertificateGenerator {
 
         repo.put(
           bs,
+          report.length,
           "application/pdf",
           "Content-Disposition: attachment; filename=\"" + filename + "\"",
           Map("certificatedata" -> "09/01/1980", "requestedby" -> person.getFullName), filename)
@@ -193,7 +194,7 @@ object ReportCertificateGenerator {
   }
 
   def getCourseClassCertificateReportFileName(courseClassUUID: String): String = {
-    mkurl(S3Service.PREFIX, S3Service.REPORTS, S3Service.CERTIFICATES, "certificates-" + ThreadLocalAuthenticator.getAuthenticatedPersonUUID.get + courseClassUUID + ".pdf")
+    mkurl(ContentService.PREFIX, ContentService.REPORTS, ContentService.CERTIFICATES, "certificates-" + ThreadLocalAuthenticator.getAuthenticatedPersonUUID.get + courseClassUUID + ".pdf")
   }
 
   def getCourseClassCertificateReportURL(courseClassUUID: String): String = {

@@ -5,7 +5,7 @@ import kornell.core.util.StringUtils
 import kornell.server.content.ContentManagers
 import kornell.server.dev.util.LibraryFilesParser
 import kornell.server.jdbc.repository.{CourseClassesRepo, CourseRepo}
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 
 object LibraryFilesRepository {
   //TODO: Review
@@ -17,7 +17,7 @@ object LibraryFilesRepository {
     val versionRepo = classRepo.version
     val version = versionRepo.get
     val course = CourseRepo(version.getCourseUUID).get
-    val filesURL = StringUtils.mkurl(S3Service.CLASSROOMS, course.getCode, version.getDistributionPrefix, "classroom/library")
+    val filesURL = StringUtils.mkurl(ContentService.CLASSROOMS, course.getCode, version.getDistributionPrefix, "classroom/library")
     try {
       val librarySrc = repo.source(filesURL, "libraryFiles.knl")
       val libraryFilesText = librarySrc.get.mkString("")

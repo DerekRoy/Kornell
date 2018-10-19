@@ -351,7 +351,10 @@ object Entities {
     prefix: String = null,
     region: String = null,
     institutionUUID: String = null,
-    path: String = null): ContentRepository = {
+    path: String = null,
+    accountName: String = null,
+    accountKey: String = null,
+    container: String = null): ContentRepository = {
     val repo = factory.newContentRepository.as
     repo.setUUID(uuid)
     repo.setRepositoryType(repositoryType)
@@ -362,6 +365,9 @@ object Entities {
     repo.setSecretAccessKey(secretAccessKey)
     repo.setInstitutionUUID(institutionUUID)
     repo.setPath(path)
+    repo.setAccountName(accountName)
+    repo.setAccountKey(accountKey)
+    repo.setContainer(container)
     repo
   }
 

@@ -13,7 +13,7 @@ object ContentRepositoriesRepo {
     if (repo.getUUID == null) {
       repo.setUUID(UUID.random)
     }
-    sql"""insert into ContentRepository (uuid,repositoryType,prefix,institutionUUID,accessKeyId,secretAccessKey,bucketName,prefix,region,path) values (
+    sql"""insert into ContentRepository (uuid,repositoryType,prefix,institutionUUID,accessKeyId,secretAccessKey,bucketName,prefix,region,path,accountName,accountKey,container) values (
       ${repo.getUUID},
       ${repo.getRepositoryType.toString},
       ${repo.getPrefix},
@@ -23,21 +23,10 @@ object ContentRepositoriesRepo {
       ${repo.getBucketName},
       ${repo.getPrefix},
       ${repo.getRegion},
-      ${repo.getPath})""".executeUpdate
-    repo
-  }
-
-  def updateRepo(repo: ContentRepository): ContentRepository = {
-    sql"""
-        | update ContentRepository set
-        | repositoryType = ${repo.getRepositoryType.toString},
-        | accessKeyId = ${repo.getAccessKeyId},
-        | secretAccessKey = ${repo.getSecretAccessKey},
-        | bucketName = ${repo.getBucketName},
-        | prefix = ${repo.getPrefix},
-        | region = ${repo.getRegion},
-        | path = ${repo.getPath}
-        | where uuid = ${repo.getUUID}""".executeUpdate
+      ${repo.getPath},
+      ${repo.getAccountName},
+      ${repo.getAccountKey},
+      ${repo.getContainer})""".executeUpdate
     repo
   }
 

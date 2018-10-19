@@ -19,7 +19,7 @@ import kornell.server.jdbc.PreparedStmt
 import kornell.server.jdbc.SQL.SQLHelper
 import kornell.server.jdbc.repository.{ContentRepositoriesRepo, CourseClassRepo, CourseRepo, InstitutionRepo, PersonRepo}
 import kornell.server.repository.TOs
-import kornell.server.service.S3Service
+import kornell.server.service.ContentService
 import kornell.server.util.DateConverter
 
 import scala.collection.JavaConverters._
@@ -217,6 +217,7 @@ object ReportCourseClassGenerator {
       }
       repo.put(
         bs,
+        report.length,
         contentType,
         "Content-Disposition: attachment; filename=\"" + filename + "\"",
         Map("certificatedata" -> "09/01/1980", "requestedby" -> person.getFullName), fileFullPath)
@@ -262,7 +263,7 @@ object ReportCourseClassGenerator {
     if (headerInfo.isDefined) {
       parameters.put("institutionName", headerInfo.get._1)
       parameters.put("courseTitle", headerInfo.get._2)
-      parameters.put("assetsURL", mkurl(headerInfo.get._9.split("Kornell.nocache.html").head, "repository", headerInfo.get._6, S3Service.PREFIX, S3Service.INSTITUTION, ""))
+      parameters.put("assetsURL", mkurl(headerInfo.get._9.split("Kornell.nocache.html").head, "repository", headerInfo.get._6, ContentService.PREFIX, ContentService.INSTITUTION, ""))
       if (courseClassUUID != null) {
         parameters.put("courseClassName", headerInfo.get._3)
         parameters.put("createdAt", headerInfo.get._4)
@@ -342,7 +343,7 @@ object ReportCourseClassGenerator {
 
   def getCourseClassInfoReportFileName(courseUUID: String, courseClassUUID: String, fileType: String): String = {
     val fileNamePrefix = getFileName(courseUUID, courseClassUUID)
-    mkurl(S3Service.PREFIX, S3Service.REPORTS, S3Service.CLASS_INFO, fileNamePrefix + " - " + ThreadLocalAuthenticator.getAuthenticatedPersonUUID.get +
+    mkurl(ContentService.PREFIX, ContentService.REPORTS, ContentService.CLASS_INFO, fileNamePrefix + " - " + ThreadLocalAuthenticator.getAuthenticatedPersonUUID.get +
       Option(courseClassUUID).getOrElse("") + Option(courseUUID).getOrElse("") + "." + getFileType(fileType))
   }
 
