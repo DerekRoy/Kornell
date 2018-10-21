@@ -49,6 +49,7 @@
 
 .header .container {
     max-width: calc((100vh - 30px) * (16 / 9));
+    margin-top: 1px;
 }
 
 .header .container icon {
@@ -78,6 +79,10 @@
     max-width: 500px;
     min-width: 180px;
     margin-left: 4em;
+}
+
+.speech-bubble p {
+    margin: 0;
 }
 
 .speech-bubble.top-right {
