@@ -49,6 +49,7 @@ public class ClassroomPresenter implements ClassroomView.Presenter {
     private Sequencer sequencer;
     private EventBus bus;
     private SCORM12Runtime runtime;
+    private boolean showCertificationTab;
 
     public ClassroomPresenter(EventBus bus, ClassroomView view, PlaceController placeCtrl, SequencerFactory seqFactory,
             KornellSession session) {
@@ -136,19 +137,20 @@ public class ClassroomPresenter implements ClassroomView.Presenter {
                 public void ok(EnrollmentLaunchTO to) {
                     alert.close();
                     loadRuntime(to.getEnrollmentEntries());
-                    loadContents(place.getEnrollmentUUID(), to.getContents());
+                    loadContents(place.getEnrollmentUUID(), to.getContents(), to.isShowCertificationTab());
                 };
 
                 private void loadRuntime(EnrollmentsEntries enrollmentEntries) {
                     runtime = SCORM12Runtime.launch(bus, session, placeCtrl, enrollmentEntries);
                 }
 
-                private void loadContents(final String enrollmentUUID, final Contents contents) {
+                private void loadContents(final String enrollmentUUID, final Contents contents, boolean showCertificationTab) {
                     // check if user has a valid enrollment to this course
                     boolean shouldHideSouthBar = (session.getCurrentCourseClass().getCourseVersionTO()
                             .getCourseVersion().getParentVersionUUID() == null);
                     GenericClientFactoryImpl.EVENT_BUS.fireEvent(new HideSouthBarEvent(shouldHideSouthBar));
                     setContents(contents);
+                    setShowCertificationTab(showCertificationTab);
                     view.display(showCourseClassContent);
                     view.asWidget().setVisible(true);
                     bus.fireEvent(new ShowPacifierEvent(false));
@@ -189,6 +191,15 @@ public class ClassroomPresenter implements ClassroomView.Presenter {
 
     private void setContents(Contents contents) {
         this.contents = contents;
+    }
+
+    @Override
+    public boolean getShowCertificationTab() {
+        return showCertificationTab;
+    }
+
+    private void setShowCertificationTab(boolean showCertificationTab) {
+        this.showCertificationTab = showCertificationTab;
     }
 
     @Override

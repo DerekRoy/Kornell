@@ -449,12 +449,12 @@ public class GenericCourseDetailsView extends Composite implements ShowDetailsEv
             displayButton(btnTopics, constants.btnTopics(), constants.btnTopicsInfo(), false);
         }
         if (isInactiveCourseClass || isExpired) {
-            if (courseClassTO.getCourseClass().getRequiredScore() != null) {
+            if (presenter.getShowCertificationTab()) {
                 displayButton(btnCertification, constants.btnCertification(), constants.printCertificateButton(),
                         false);
             }
         } else if (isEnrolled && !isCancelled && !isClassroomJsonNeededAndAbscent) {
-            if (courseClassTO.getCourseClass().getRequiredScore() != null) {
+            if (presenter.getShowCertificationTab()) {
                 displayButton(btnCertification, constants.btnCertification(), constants.printCertificateButton(),
                         false);
             }

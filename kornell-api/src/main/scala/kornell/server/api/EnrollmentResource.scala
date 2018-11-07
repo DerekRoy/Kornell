@@ -7,11 +7,12 @@ import javax.ws.rs.core.Response
 import kornell.core.entity._
 import kornell.core.lom.Contents
 import kornell.core.to.EnrollmentLaunchTO
+import kornell.server.dev.util.WizardParser
 import kornell.server.ep.EnrollmentSEP
 import kornell.server.jdbc.PreparedStmt
 import kornell.server.jdbc.SQL._
 import kornell.server.jdbc.repository.CourseClassesRepo.byEnrollment
-import kornell.server.jdbc.repository.{AuthRepo, CourseClassesRepo, CourseRepo, CourseVersionRepo, EnrollmentRepo, PersonRepo}
+import kornell.server.jdbc.repository.{AuthRepo, CertificatesDetailsRepo, CourseClassesRepo, CourseRepo, CourseVersionRepo, EnrollmentRepo, PersonRepo}
 import kornell.server.repository.{ContentRepository, Entities, TOs}
 import kornell.server.scorm12.SCORM12
 import kornell.server.util.AccessDeniedErr
@@ -108,38 +109,41 @@ class EnrollmentResource(uuid: String) {
       actomEntries.setEntries(entriesMap)
     }
 
-    //if the enrollment is on a class and it's a SCORM12 version
-    if (courseClass != null &&
-      ContentSpec.SCORM12.equals(CourseRepo(courseVersion.getCourseUUID).get.getContentSpec)) {
-      //initialize the enrollmentEntries map if no attribute exists
-      val enrollmentEntries = Option(eEntries.getEnrollmentEntriesMap.get(enrollment.getUUID)) match {
-        case Some(ee) => ee
-        case None => {
-          val ee = Entities.newEnrollmentEntries
-          eEntries.getEnrollmentEntriesMap.put(enrollment.getUUID, ee)
-          ee
+    if (courseClass != null) {
+      if(ContentSpec.SCORM12.equals(CourseRepo(courseVersion.getCourseUUID).get.getContentSpec)) {
+        //if the enrollment is on a class and it's a SCORM12 version
+        //initialize the enrollmentEntries map if no attribute exists
+        val enrollmentEntries = Option(eEntries.getEnrollmentEntriesMap.get(enrollment.getUUID)) match {
+          case Some(ee) => ee
+          case None => {
+            val ee = Entities.newEnrollmentEntries
+            eEntries.getEnrollmentEntriesMap.put(enrollment.getUUID, ee)
+            ee
+          }
         }
-      }
 
-      //initialize for each actom
-      eContents.getChildren.asScala.foreach { topic =>
-        if (topic.getTopic != null) {
-          topic.getTopic.getChildren.asScala.foreach { externalPage =>
-            val key = externalPage.getExternalPage.getKey
-            Option(enrollmentEntries.getActomEntriesMap.get(key)) match {
-              case Some(ae) => ae
-              case None => {
-                val entriesMap = new util.HashMap[String, String]()
-                val launchedMap = SCORM12.initialize(entriesMap, person, enrollment, courseClass)
-                entriesMap.putAll(launchedMap)
-                val ae = Entities.newActomEntries(enrollment.getUUID, key, entriesMap)
-                enrollmentEntries.getActomEntriesMap.put(key, ae)
-                ae
+        //initialize for each actom
+        eContents.getChildren.asScala.foreach { topic =>
+          if (topic.getTopic != null) {
+            topic.getTopic.getChildren.asScala.foreach { externalPage =>
+              val key = externalPage.getExternalPage.getKey
+              Option(enrollmentEntries.getActomEntriesMap.get(key)) match {
+                case Some(ae) => ae
+                case None => {
+                  val entriesMap = new util.HashMap[String, String]()
+                  val launchedMap = SCORM12.initialize(entriesMap, person, enrollment, courseClass)
+                  entriesMap.putAll(launchedMap)
+                  val ae = Entities.newActomEntries(enrollment.getUUID, key, entriesMap)
+                  enrollmentEntries.getActomEntriesMap.put(key, ae)
+                  ae
+                }
               }
             }
           }
         }
       }
+      val hasCertificateDetails = CertificatesDetailsRepo.findCertificateDetails(courseVersion.getCourseUUID, courseVersion.getUUID, courseClass.getUUID).isDefined
+      eLaunch.setShowCertificationTab(hasCertificateDetails && courseClass.getRequiredScore != null)
     }
 
     eLaunch.setEnrollmentEntries(eEntries)

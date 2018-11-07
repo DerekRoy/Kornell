@@ -9,6 +9,8 @@ public interface ClassroomView extends IsWidget {
     public interface Presenter extends IsWidget {
         Contents getContents();
 
+        boolean getShowCertificationTab();
+
         void startSequencer();
 
         void stopSequencer();

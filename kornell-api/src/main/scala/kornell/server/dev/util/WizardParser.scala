@@ -108,7 +108,7 @@ object WizardParser {
         }
       }
     }
-    new BigDecimal(0)
+    null
   }
 
 }

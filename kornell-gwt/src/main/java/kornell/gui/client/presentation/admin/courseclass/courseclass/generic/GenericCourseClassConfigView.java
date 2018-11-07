@@ -135,7 +135,7 @@ public class GenericCourseClassConfigView extends Composite {
         profileFields.setVisible(false);
         this.fields = new ArrayList<KornellFormFieldWrapper>();
         courseClass = isCreationMode ? entityFactory.newCourseClass().as() : courseClassTO.getCourseClass();
-        Boolean isAllowCertification = ((courseClass.getRequiredScore() != null && courseClass.getRequiredScore().compareTo(BigDecimal.ZERO) > 0) || isCreationMode);
+        Boolean isAllowCertification = (courseClass.getRequiredScore() != null || isCreationMode);
         isWizardClass = courseClassTO != null && ContentSpec.WIZARD == courseClassTO.getCourseVersionTO().getCourseTO().getCourse().getContentSpec();
 
         profileFields.clear();

@@ -24,6 +24,7 @@ import kornell.server.util.DateConverter
 object ReportCertificateGenerator {
 
   def newCertificateInformationTO: CertificateInformationTO = new CertificateInformationTO
+
   def newCertificateInformationTO(personFullName: String, personCPF: String, courseName: String, courseClassName: String, institutionName: String, courseClassFinishedDate: Date, assetsRepositoryUUID: String, distributionPrefix: String, courseVersionUUID: String, courseClassUUID: String, courseUUID: String, baseURL: String, repositoryType: RepositoryType, courseCode: String): CertificateInformationTO = {
     val to = newCertificateInformationTO
     to.setPersonFullName(personFullName)
@@ -61,17 +62,11 @@ object ReportCertificateGenerator {
       rs.getString("code"))
 
   def findCertificateDetails(certificateInformationTO: CertificateInformationTO): CertificateDetails = {
-    var details = CertificatesDetailsRepo.getForEntity(certificateInformationTO.getCourseClassUUID, CourseDetailsEntityType.COURSE_CLASS)
-    if (details.isEmpty) {
-      details = CertificatesDetailsRepo.getForEntity(certificateInformationTO.getCourseVersionUUID, CourseDetailsEntityType.COURSE_VERSION)
-      if (details.isEmpty) {
-        details = CertificatesDetailsRepo.getForEntity(certificateInformationTO.getCourseUUID, CourseDetailsEntityType.COURSE)
-        if (details.isEmpty) {
-          details = Option(Entities.newCertificateDetails(null, "reports/", CertificateType.NO_BG, CourseDetailsEntityType.COURSE_CLASS, null))
-        }
-      }
-    }
-    details.get
+    val certificateDetails = CertificatesDetailsRepo.findCertificateDetails(certificateInformationTO.getCourseUUID, certificateInformationTO.getCourseVersionUUID, certificateInformationTO.getCourseClassUUID)
+    if (certificateDetails.isDefined)
+      certificateDetails.get
+    else
+      Entities.newCertificateDetails(null, "reports/", CertificateType.NO_BG, CourseDetailsEntityType.COURSE_CLASS, null)
   }
 
   def generateCertificate(userUUID: String, courseClassUUID: String, resp: HttpServletResponse): Array[Byte] = {
@@ -104,7 +99,8 @@ object ReportCertificateGenerator {
 
   def getCertificateInformationTOsByCourseClass(courseClassUUID: String, enrollments: String): List[CertificateInformationTO] = {
 
-    var sql = """select p.fullName, c.name as courseName, cc.name, i.fullName as institutionName, i.assetsRepositoryUUID, cv.distributionPrefix, p.cpf, e.certifiedAt, cv.uuid as courseVersionUUID, cc.uuid as courseClassUUID, c.uuid as courseUUID, i.baseURL, s.repositoryType, c.code
+    var sql =
+      """select p.fullName, c.name as courseName, cc.name, i.fullName as institutionName, i.assetsRepositoryUUID, cv.distributionPrefix, p.cpf, e.certifiedAt, cv.uuid as courseVersionUUID, cc.uuid as courseClassUUID, c.uuid as courseUUID, i.baseURL, s.repositoryType, c.code
       from Person p
       join Enrollment e on p.uuid = e.personUUID
       join CourseClass cc on cc.uuid = e.courseClassUUID
@@ -114,7 +110,7 @@ object ReportCertificateGenerator {
       join ContentRepository s on s.uuid = i.assetsRepositoryUUID
       where e.certifiedAt is not null and
       e.state <> 'cancelled' and """ +
-      s"""cc.uuid = '$courseClassUUID' """
+        s"""cc.uuid = '$courseClassUUID' """
     if (enrollments != null)
       sql += s"""and e.uuid in ( $enrollments )"""
     if (sql.contains("--")) throw new EntityConflictException("invalidValue")
