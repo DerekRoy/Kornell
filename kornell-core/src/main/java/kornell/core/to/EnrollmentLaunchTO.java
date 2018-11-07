@@ -12,4 +12,7 @@ public interface EnrollmentLaunchTO {
     EnrollmentsEntries getEnrollmentEntries();
     void setEnrollmentEntries(EnrollmentsEntries entries);
 
+    boolean isShowCertificationTab();
+    void setShowCertificationTab(boolean showCertificationTab);
+
 }

@@ -11,13 +11,13 @@ object CertificatesDetailsRepo {
       certificateDetails.setUUID(UUID.random)
     }
     sql"""
-    | insert into CertificateDetails (uuid,bgImage,certificateType,entityType,entityUUID)
-    | values(
-    | ${certificateDetails.getUUID},
-    | ${certificateDetails.getBgImage},
-    | ${certificateDetails.getCertificateType.toString},
-    | ${certificateDetails.getEntityType.toString},
-    | ${certificateDetails.getEntityUUID})""".executeUpdate
+         | insert into CertificateDetails (uuid,bgImage,certificateType,entityType,entityUUID)
+         | values(
+         | ${certificateDetails.getUUID},
+         | ${certificateDetails.getBgImage},
+         | ${certificateDetails.getCertificateType.toString},
+         | ${certificateDetails.getEntityType.toString},
+         | ${certificateDetails.getEntityUUID})""".executeUpdate
 
     certificateDetails
   }
@@ -26,5 +26,17 @@ object CertificatesDetailsRepo {
     sql"""
       select * from CertificateDetails where entityUUID = ${entityUUID} and entityType = ${entityType.toString}
     """.first[CertificateDetails]
+  }
+
+  def findCertificateDetails(courseUUID: String, courseVersionUUID: String, courseClassUUID: String): Option[CertificateDetails] = {
+    val courseClassCertificateDetails = getForEntity(courseClassUUID, CourseDetailsEntityType.COURSE_CLASS)
+    val courseVersionCertificateDetails = getForEntity(courseVersionUUID, CourseDetailsEntityType.COURSE_VERSION)
+    val courseCertificateDetails = getForEntity(courseUUID, CourseDetailsEntityType.COURSE)
+    if (courseClassCertificateDetails.isDefined)
+      courseClassCertificateDetails
+    else if (courseVersionCertificateDetails.isDefined)
+      courseVersionCertificateDetails
+    else
+      courseCertificateDetails
   }
 }
