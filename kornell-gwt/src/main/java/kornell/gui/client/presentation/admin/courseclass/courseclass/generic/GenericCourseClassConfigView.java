@@ -135,7 +135,7 @@ public class GenericCourseClassConfigView extends Composite {
         profileFields.setVisible(false);
         this.fields = new ArrayList<KornellFormFieldWrapper>();
         courseClass = isCreationMode ? entityFactory.newCourseClass().as() : courseClassTO.getCourseClass();
-        Boolean isAllowCertification = (courseClass.getRequiredScore() != null || isCreationMode);
+        Boolean isAllowCertification = ((courseClass.getRequiredScore() != null && courseClass.getRequiredScore().compareTo(BigDecimal.ZERO) > 0) || isCreationMode);
         isWizardClass = courseClassTO != null && ContentSpec.WIZARD == courseClassTO.getCourseVersionTO().getCourseTO().getCourse().getContentSpec();
 
         profileFields.clear();
@@ -228,7 +228,7 @@ public class GenericCourseClassConfigView extends Composite {
         ((TextBox) requiredScore.getFieldWidget()).setEnabled(isAllowCertification);
 
         allowCertification = new KornellFormFieldWrapper("Certificado disponível?",
-                formHelper.createCheckBoxFormField(isAllowCertification), isInstitutionAdmin);
+                formHelper.createCheckBoxFormField(isAllowCertification), isInstitutionAdmin && !isWizardClass);
         fields.add(allowCertification);
         profileFields.add(allowCertification);
         ((CheckBox) allowCertification.getFieldWidget()).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
