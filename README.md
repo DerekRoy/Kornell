@@ -1,14 +1,14 @@
-This project is a new e-learning platform, because we need to change the way we educate ourselves. Current e-learning solutions and content, specially in developing countries, leaves much to be desired in technology and services.
+This project is a new e-learning platform to change the way we educate ourselves. Current e-learning solutions and content, especially in developing countries, leave much to be desired in technology and services.
  
-Learning is proven to be more effective when done socially and interactivelly, not by watching silly animations or unchallenging games. This platform shall enable content developers to publish interactive, social and exciting content.
+Learning is proven to be more effective when done socially and interactivelly, not by watching silly animations or playing games that are not challenging. This platform will enable developers to publish interactive, social, and exciting content.
 
-Technology is a key piece of education, and this project shall support the best of modern web technologies, leveraging high quality audio, video and presentations on mobile devices as well as on desktops.
+Technology is an essential piece of education, and this project supports high quality web technologies with high fidelity audio, HD video, and mobile and desktop presentations.
 
-Finally, we aim to be extremely cost efficient, leveraging the scale advantages of cloud computing and offering this platform as an open source project, allowing its usage by institutions of any size, budget and maturity.
+The aim is to be extremely cost efficient, leveraging the scaling advantages of cloud computing and offering this platform through an open source project. By allowing institutions of any size, budget, and maturity to use this technology, education can be made more easily accessible for everyone.
 
-If you would like to be part of this, plase reach us. There is surely a lot to do!
+If you would like to be contribute, plase message the project team. There is a lot more work to do!
 
-And also, take some time to get inspired by the people that inspire us:
+Please take some time to get inspired by the people who inspire us:
 
 http://www.ted.com/talks/daphne_koller_what_we_re_learning_from_online_education.html
 
