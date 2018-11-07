@@ -100,7 +100,7 @@ object WizardParser {
           {
             val slideObjMap = slideObj.asInstanceOf[Map[String, Any]]
             val slideType = slideObjMap("type").asInstanceOf[String]
-            if(slideType == "finalExam" && slideObjMap.contains(("expectedGrade"))){
+            if(slideType == "finalExam" && slideObjMap.contains(("expectedGrade")) && slideObjMap("expectedGrade") != null){
               return new BigDecimal(slideObjMap("expectedGrade").asInstanceOf[Double])
             }
           }
